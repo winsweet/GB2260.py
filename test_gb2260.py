@@ -6,7 +6,7 @@ import sys
 
 from pytest import mark, raises
 
-from gb2260 import Division, get
+from gb2260 import Division, get, query
 from gb2260.division import make_year_key
 
 
@@ -122,3 +122,17 @@ def test_make_invalid_year_key():
     raises(ValueError, make_year_key, '20')
     raises(ValueError, make_year_key, 20122222)
     raises(ValueError, make_year_key, '20122222')
+
+
+@mark.parametrize('name,higher_code,is_prefecture,code,year', [
+    (u'吴江', 0, False, 320509, None),
+    (u'吴江市', 0, False, 320584, 2011),
+    (u'鼓楼', 410000, False, 410204, None),
+    (u'鼓楼', 350000, False, 350102, None),
+    (u'鼓楼', 320300, False, 320302, None),
+    (u'鼓楼', 320100, False, 320106, None),
+    (u'开封', 0, False, 410224, None),
+    (u'开封', 0, True, 410200, None),
+])
+def test_quering(name, higher_code, is_prefecture, code, year):
+    assert query(name, higher_code, is_prefecture) == get(code, year)

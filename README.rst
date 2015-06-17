@@ -61,6 +61,31 @@ The hierarchic divisions could be generated with a iterator method:
     九江市 360400
     德安县 360426
 
+The other way to look up a administrative division by its GB2260 
+name or its alias is ``gb2260.query(name)``:
+
+.. code-block:: python
+    >>> import gb2260
+    >>>
+    >>> print(gb2260.query('吴江'))
+    <GB2260 320509 江苏省/苏州市/吴江区>
+    >>> print(gb2260.query('吴江市'))
+    <GB2260-2011 320584 江苏省/苏州市/吴江市>
+    >>>
+    >>> print(gb2260.query('鼓楼', higher_code = 410000))
+    <GB2260 410204 河南省/开封市/鼓楼区>
+    >>> print(gb2260.query('鼓楼', higher_code = 350000))
+    <GB2260 350102 福建省/福州市/鼓楼区>
+    >>> print(gb2260.query('鼓楼', higher_code = 320300))
+    <GB2260 320302 江苏省/徐州市/鼓楼区>
+    >>> print(gb2260.query('鼓楼', higher_code = 320100))
+    <GB2260 320106 江苏省/南京市/鼓楼区>
+    >>>
+    >>> print(gb2260.query('开封'))
+    <GB2260 410224 河南省/开封市/开封县>
+    >>> print(gb2260.query('开封', is_prefecture=True))
+    <GB2260 410200 河南省/开封市>
+
 
 Issues
 ------

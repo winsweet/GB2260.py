@@ -2,11 +2,8 @@ from __future__ import unicode_literals
 
 import weakref
 
-from .data import data
+from .data import LATEST_YEAR, data, index
 from ._compat import unicode_compatible, unicode_type
-
-
-LATEST_YEAR = 2014
 
 
 @unicode_compatible
@@ -79,6 +76,32 @@ class Division(object):
         for year, store in pairs:
             if key in store:
                 return cls.get(key, year=year)
+
+    @classmethod
+    def query(cls, name, higher_code=0, is_prefecture=False):
+        """Query administrative division by its name in all revision.
+
+        :param name: the division name or its alias or its used name.
+        :param higher_code: the division code at the higher division.
+        :param is_prefecture: specify the division level
+                    when prefecture/county has the same alias.
+        :returns: A :class:`gb2260.Division` object or ``None``.
+        """
+
+        if isinstance(name, bytes):
+            name = name.decode('utf-8')
+
+        if name not in index:
+            return None
+
+        limit = 10000 if higher_code % 10000 == 0 else 100
+        for code, year in index[name]:
+            if not higher_code or higher_code/limit == code/limit:
+                return cls.get(
+                        str(code/100*100 if is_prefecture else code),
+                        year
+                )
+        return None
 
     @property
     def province(self):
