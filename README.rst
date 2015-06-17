@@ -65,6 +65,7 @@ The other way to look up a administrative division by its GB2260
 name or its alias is ``gb2260.query(name)``:
 
 .. code-block:: python
+
     >>> import gb2260
     >>>
     >>> print(gb2260.query('吴江'))
