@@ -97,10 +97,9 @@ class Division(object):
         limit = 10000 if higher_code % 10000 == 0 else 100
         for code, year in index[name]:
             if not higher_code or higher_code/limit == code/limit:
-                return cls.get(
-                        str(code/100*100 if is_prefecture else code),
-                        year
-                )
+                if is_prefecture and code % 100 != 0:
+                    continue
+                return cls.get(code, year)
         return None
 
     @property

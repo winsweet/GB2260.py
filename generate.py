@@ -8,8 +8,16 @@ A script to generate the data module.
 from __future__ import print_function, unicode_literals
 import os
 import sys
+import re
 
 LATEST_YEAR = 2014
+MINORITY_RULE = re.compile(
+        r'(.*?)(?:(?:(?:蒙古|回|藏|维吾尔|苗|彝|壮|布依|朝鲜|'
+        r'满|侗|瑶|白|土家|哈尼|哈萨克|傣|黎|傈僳|佤|畲|拉祜|'
+        r'水|东乡|纳西|景颇|柯尔克孜|土|达斡尔|仫佬|羌|布朗|'
+        r'撒拉|毛南|仡佬|锡伯|阿昌|普米|塔吉克|怒|乌兹别克|'
+        r'俄罗斯|鄂温克|德昂|保安|裕固|京|塔塔尔|独龙|鄂伦春|'
+        r'赫哲|门巴|珞巴|基诺|高山)族)+)自治(?:县|州|旗)')
 
 
 def get_name_suffix(path):
@@ -27,10 +35,16 @@ def ensure_unicode(text):
 
 
 def get_alias(name):
-    if name == u'县' or name == u'市辖区' or name[-3:] == u'自治县':
+    if name == u'县' or name == u'市辖区':
         return ''
+    if name[-3:-1] == u'自治':
+        alias = MINORITY_RULE.findall(name)
+        if alias and alias[0]:
+            return alias[0]
     if len(name) >= 4 and (name[-2:] == u'地区' or name[-2:] == u'新区'):
         return name[:-2]
+    if name[:2] == u'香港' or name[:2] == u'澳门':
+        return name[:2]
     if (len(name) > 2 and
             (name[-1] == u'县' or name[-1] == u'区' or name[-1] == u'市')):
         return name[:-1]
@@ -42,7 +56,7 @@ def index_insert(name, code, year, index):
         return
     if name not in index:
         index[name] = {}
-    if code not in index[name] or not year:
+    if code not in index[name] or year is None:
         index[name][code] = year
         return
     if not index[name][code]:
